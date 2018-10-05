@@ -29,4 +29,4 @@ target/
 hs_err_pid*
 
 # AWS ACCESS KEY and SECRET ACCESS KEY 
-*AWSCredentials.java
+*Credentials.java

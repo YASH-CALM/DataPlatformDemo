@@ -15,6 +15,7 @@ public class ProcessingPlant {
 	private String location;
 	// Associated settings/attributes 
 	private Attributes attributes;
+	
 	public int getId() {
 		return id;
 	}

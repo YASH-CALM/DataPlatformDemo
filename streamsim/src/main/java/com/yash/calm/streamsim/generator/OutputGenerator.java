@@ -9,9 +9,9 @@ import com.yash.calm.streamsim.model.ProcessingPlant;
 public class OutputGenerator {
 
 	private static Output output = new Output();
-	private Random rand = new Random();
+	private static Random rand = new Random();
 	
-	public Output generate(ProcessingPlant plant) {
+	public static Output generate(ProcessingPlant plant) {
 		int plantId = plant.getId();
 		output.setPlantId(plantId);
 		
@@ -20,11 +20,11 @@ public class OutputGenerator {
 		int scalingFactor = 1;
 		double randomFluctuation = 0.0;
 		
-		int speed = attributes.getSpeed();
+		double speed = attributes.getSpeed();
 		int particleSize = attributes.getParticleSize();
 		double frequency = attributes.getFrequency();
 	
-		double actualOutput = speed*frequency - particleSize;
+		double actualOutput = 1000000*speed/frequency - particleSize;
 		actualOutput *= scalingFactor;
 		output.setExpectedOutput(actualOutput);
 		
@@ -40,7 +40,7 @@ public class OutputGenerator {
 	 * by generating a random number between
 	 * the negative square root and positive square root of the input
 	 */
-	private double calculateFluctuation(double input) {
+	private static double calculateFluctuation(double input) {
 		double rangeMax = Math.sqrt(input);
 		double rangeMin = -1.0*rangeMax;
 		double randomFluctuation = rangeMin + (rangeMax - rangeMin)*rand.nextDouble();

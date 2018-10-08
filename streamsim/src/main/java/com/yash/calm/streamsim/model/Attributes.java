@@ -19,7 +19,7 @@ public class Attributes {
 	// Time associated with the given setting
 	private Date time; 
 	// Speed setting of the processing plant
-	private int speed;
+	private double speed;
 	// How fine the material is crushed
 	private int particleSize;
 	// The frequency of the crusher
@@ -57,10 +57,10 @@ public class Attributes {
 	public void setTime(Date time) {
 		this.time = time;
 	}
-	public int getSpeed() {
+	public double getSpeed() {
 		return speed;
 	}
-	public void setSpeed(int speed) {
+	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
 	public int getFineness() {

@@ -15,6 +15,7 @@ public class ProcessingPlant {
 	private String location;
 	// Associated settings/attributes 
 	private Attributes attributes;
+	
 	public int getId() {
 		return id;
 	}
@@ -38,6 +39,16 @@ public class ProcessingPlant {
 	}
 	public void setAttributes(Attributes attributes) {
 		this.attributes = attributes;
+	}
+	
+	public String toJSON() {
+		String json = "[{" + 
+				"id:"+ this.id + "," +
+				"isActive:"+ this.isActive + "," +
+				"location:"+ this.location +","+
+				"attributes:"+this.attributes.toJSON() +
+				"}]";
+		return json;
 	}
  	
 	

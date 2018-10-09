@@ -107,4 +107,6 @@ public class Output {
 				+ ", actualOutput=" + actualOutput + ", time=" + time + ", speed=" + speed + ", particleSize="
 				+ particleSize + ", frequency=" + frequency + ", force=" + force + "]";
 	}
+
+
 }

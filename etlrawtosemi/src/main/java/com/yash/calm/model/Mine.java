@@ -9,7 +9,7 @@ public class Mine {
 	// Id for the mine
 	private int id;
 	// Functional status of the mine
-	private boolean isActive;
+	private int isActive;
 	// Geographic location of the mine
 	private String location;
 	// Raw material being extracted from the mine.
@@ -21,10 +21,10 @@ public class Mine {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public boolean isActive() {
+	public int getActive() {
 		return isActive;
 	}
-	public void setActive(boolean isActive) {
+	public void setActive(int isActive) {
 		this.isActive = isActive;
 	}
 	public String getLocation() {
@@ -38,6 +38,10 @@ public class Mine {
 	}
 	public void setMaterial(String material) {
 		this.material = material;
+	}
+	@Override
+	public String toString() {
+		return "Mine [id=" + id + ", isActive=" + isActive + ", location=" + location + ", material=" + material + "]";
 	}
 	
 	

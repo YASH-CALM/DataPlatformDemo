@@ -10,7 +10,7 @@ public class ProcessingPlant {
 	// The id of the processing plant
 	private int id;
 	// Functional status of the plant
-	private boolean isActive;
+	private int isActive;
 	// Geographic location of the plant
 	private String location;
 
@@ -21,10 +21,10 @@ public class ProcessingPlant {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public boolean isActive() {
+	public int isActive() {
 		return isActive;
 	}
-	public void setActive(boolean isActive) {
+	public void setActive(int isActive) {
 		this.isActive = isActive;
 	}
 	public String getLocation() {
@@ -33,4 +33,10 @@ public class ProcessingPlant {
 	public void setLocation(String location) {
 		this.location = location;
 	}
+	@Override
+	public String toString() {
+		return "ProcessingPlant [id=" + id + ", isActive=" + isActive + ", location=" + location + "]";
+	}
+	
+	
 }

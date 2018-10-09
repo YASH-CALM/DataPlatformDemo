@@ -62,7 +62,6 @@ public class Main implements RequestHandler<Object, Object> {
 //        s3Client.putObject(semiBucket, "semi.json", file);
     }
     
-    public static 
 
     public static StringBuilder getDataFromObject(InputStream objectData){
         BufferedReader streamReader = null;

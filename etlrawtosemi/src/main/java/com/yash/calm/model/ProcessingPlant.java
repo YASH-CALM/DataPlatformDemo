@@ -1,4 +1,4 @@
-package com.yash.calm.streamsim.model;
+package com.yash.calm.model;
 
 /**
  * The processing plant where the metal
@@ -13,8 +13,8 @@ public class ProcessingPlant {
 	private boolean isActive;
 	// Geographic location of the plant
 	private String location;
-	// Associated settings/attributes 
-	private Attributes attributes;
+
+	
 	public int getId() {
 		return id;
 	}
@@ -33,12 +33,4 @@ public class ProcessingPlant {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	public Attributes getAttributes() {
-		return attributes;
-	}
-	public void setAttributes(Attributes attributes) {
-		this.attributes = attributes;
-	}
- 	
-	
 }

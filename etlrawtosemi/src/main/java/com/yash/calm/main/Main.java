@@ -10,8 +10,9 @@ import com.amazonaws.services.s3.event.S3EventNotification;
 import com.amazonaws.services.s3.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
-import com.yash.calm.model.Attributes;
+import com.yash.calm.model.Mine;
 import com.yash.calm.model.Output;
+import com.yash.calm.model.ProcessingPlant;
 
 import java.io.*;
 import java.util.Map;
@@ -19,33 +20,49 @@ import java.util.Map;
 public class Main implements RequestHandler<Object, Object> {
 
     private static AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
-    private static String outputBucket = "raw-output-dpd2018";
-    private static String attributesBucket = "raw-attributes-dpd2018";
-    private static String outputKey = "output.json";
-    private static String attributeKey = "atrributes.json";
-    private static String semiBucket = "semi-transformed-dpd2018";
+    private static final String outputBucket = "raw-output-dpd2018";
+    //private static final String attributesBucket = "raw-attributes-dpd2018";
+    private static final String masterBucket = "master-attributes-dpd2018";
+    private static final String plantsKey = "plants.json";
+    private static final String minesKey = "mines.json";
+    private static final String outputKey = "output.json";
+    //private static final String attributeKey = "atrributes.json";
+    private static final String semiBucket = "semi-transformed-dpd2018";
 
     public static void main(String[] args) throws IOException {
         S3Object output = s3Client.getObject(new GetObjectRequest(outputBucket, outputKey));
-        S3Object attributes = s3Client.getObject(new GetObjectRequest(attributesBucket, attributeKey));
-
+        S3Object plants = s3Client.getObject(masterBucket, plantsKey);
+        S3Object mines = s3Client.getObject(masterBucket, minesKey);
+        
         StringBuilder outputContent = getDataFromObject(output.getObjectContent());
-        StringBuilder attributesContent = getDataFromObject(attributes.getObjectContent());
+        StringBuilder plantsContent = getDataFromObject(plants.getObjectContent());
+        StringBuilder minesContent = getDataFromObject(mines.getObjectContent());
+        
+        //S3Object attributes = s3Client.getObject(new GetObjectRequest(attributesBucket, attributeKey));
 
+        //StringBuilder outputContent = getDataFromObject(output.getObjectContent());
+        //StringBuilder attributesContent = getDataFromObject(attributes.getObjectContent());
+        
         ObjectMapper mapper = new ObjectMapper();
         try {
             Output[] outputData = mapper.readValue(outputContent.toString(), Output[].class);
-            Attributes[] attributesData = mapper.readValue(attributesContent.toString(), Attributes[].class);
+            Mine[] mineData = mapper.readValue(minesContent.toString(), Mine[].class);
+            ProcessingPlant[] plantData = mapper.readValue(plantsContent.toString(), ProcessingPlant[].class);
+            System.out.println(outputData);
+            System.out.println(mineData);
+            System.out.println(plantData);
         }
         catch(Exception e){
                 e.printStackTrace();
-            }
+        }
 
 
-        File file = new File("semi.json");
-        mapper.writeValue(file, data);
-        s3Client.putObject(semiBucket, "semi.json", file);
+//        File file = new File("semi.json");
+//        mapper.writeValue(file, data);
+//        s3Client.putObject(semiBucket, "semi.json", file);
     }
+    
+    public static 
 
     public static StringBuilder getDataFromObject(InputStream objectData){
         BufferedReader streamReader = null;
@@ -62,9 +79,10 @@ public class Main implements RequestHandler<Object, Object> {
 
     }
 
-    public static Object getDataFromContent(StringBuilder content, Class clazz){
-
-    }
+   
+//    public static Object getDataFromContent(StringBuilder content, Class clazz){
+//
+//    }
 
     public Object handleRequest(Object o, Context context) {
         S3Event input = (S3Event) o;

@@ -17,8 +17,7 @@ public class Output {
 	// Actual measured output
 	private double actualOutput;
 	// Time that the measurement
-	private Date time;
-	
+	private Date time = new Date();
 	
 	public int getPlantId() {
 		return plantId;

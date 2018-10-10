@@ -5,6 +5,8 @@ import com.yash.calm.streamsim.generator.OutputGenerator;
 import com.yash.calm.streamsim.model.Attributes;
 import com.yash.calm.streamsim.model.Output;
 import com.yash.calm.streamsim.model.ProcessingPlant;
+import com.yash.calm.streamsim.util.StreamUtil;
+
 
 public class AttributesGeneratorTest {
 
@@ -25,8 +27,8 @@ public class AttributesGeneratorTest {
 	    Output output = OutputGenerator.generate(plant);
 	    
 	    double actualOutput = output.getActualOutput();
-	    
-		System.out.println(actualOutput);
+	
+		System.out.println(StreamUtil.jsonGenerator(output,plant));
 		
 	}
 }

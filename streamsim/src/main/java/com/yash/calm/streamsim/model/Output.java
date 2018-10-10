@@ -1,4 +1,4 @@
-package com.yash.calm.streamsim.model;
+ package com.yash.calm.streamsim.model;
 
 import java.util.Date;
 

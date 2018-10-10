@@ -1,10 +1,6 @@
 package com.yash.calm.streamsim.util;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import com.yash.calm.streamsim.generator.AttributeGenerator;
-import com.yash.calm.streamsim.generator.OutputGenerator;
 import com.yash.calm.streamsim.model.Attributes;
 import com.yash.calm.streamsim.model.Output;
 import com.yash.calm.streamsim.model.ProcessingPlant;
@@ -26,5 +22,4 @@ public class StreamUtil {
 					"},";
 		return json;
 	}
-
 }

@@ -15,6 +15,9 @@ import com.amazonaws.services.kinesis.model.PutRecordsRequest;
 import com.amazonaws.services.kinesis.model.PutRecordsRequestEntry;
 import com.amazonaws.services.kinesis.model.PutRecordsResult;
 import com.yash.calm.streamsim.encryption.Credentials;
+import com.yash.calm.streamsim.generator.AttributeGenerator;
+import com.yash.calm.streamsim.generator.OutputGenerator;
+import com.yash.calm.streamsim.model.Attributes;
 import com.yash.calm.streamsim.model.Output;
 import com.yash.calm.streamsim.model.ProcessingPlant;
 import com.yash.calm.streamsim.util.SimulationUtil;
@@ -22,7 +25,6 @@ import com.yash.calm.streamsim.util.StreamUtil;
 
 public class StreamingApp {
 	public static void main(String[] args) {
-		
 		// Set credentials
 		AWSCredentials credentials = new BasicAWSCredentials(
 				Credentials.ACCESS_KEY, 
@@ -39,7 +41,9 @@ public class StreamingApp {
 		putRecordsRequest.setStreamName("DataPlatformDemo"); 
 		
 		// Generate the processing plants for simulation and add attributes
+
 		List<ProcessingPlant> plants = SimulationUtil.generateProcessingPlants();
+
 		
 		// Simulate, and stream data into kinesis record request.
 		// Generate new attributes every minute
@@ -49,7 +53,7 @@ public class StreamingApp {
 			
 			//Generate new outputs every five seconds.
 			for(int i = 0; i < 11; i++) {
-				
+
 				List<Output> outputs = SimulationUtil.generateOutputs(plants);
 				List<String> jsonOutputs = SimulationUtil.generateJsonOutputs(outputs, plants);
 			
@@ -78,4 +82,5 @@ public class StreamingApp {
 			}
 		}
 	}
+
 }

@@ -26,7 +26,7 @@ public class AttributesGeneratorTest {
 	    Output output = OutputGenerator.generate(plant);
 	    
 	    double actualOutput = output.getActualOutput();
-	    
+
 		System.out.println(StreamUtil.jsonGenerator(output,plant));
 		
 	}

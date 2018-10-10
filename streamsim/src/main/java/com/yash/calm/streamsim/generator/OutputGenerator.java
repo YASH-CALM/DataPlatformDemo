@@ -15,6 +15,7 @@ public class OutputGenerator {
 		int plantId = plant.getId();
 		output.setPlantId(plantId);
 		output.setMineId(100 + rand.nextInt(2));
+
 		Attributes attributes = plant.getAttributes();
 		
 		int scalingFactor = 1;

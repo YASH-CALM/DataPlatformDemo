@@ -1,7 +1,6 @@
 package com.yash.calm.main;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -26,26 +25,34 @@ import com.yash.calm.model.ProcessingPlant;
 public class Main implements RequestHandler<S3Event, String> {
 
 	private static AmazonS3 s3Client;
-	private static final String OUTPUT_BUCKET = "raw-output-dpd2018";
-	// private static final String attributesBucket = "raw-attributes-dpd2018";
 	private static final String MASTER_BUCKET = "master-dpd2018";
 	private static final String PLANTS_KEY = "processing_plant.json";
 	private static final String MINES_KEY = "mine.json";
-	private static final String OUTPUT_KEY = "output.json";
-	// private static final String attributeKey = "atrributes.json";
 	private static final String SEMI_BUCKET = "semi-transformed-dpd2018";
 	private static final String REGION = "us-east-1";
-
-	public static void main(String[] args) throws IOException {
+	
+	public String handleRequest(S3Event s3event, Context context) {
+		// Set up access credentials
 		AWSCredentials credentials = new BasicAWSCredentials(Credentials.ACCESSKEY, Credentials.SECRETKEY);
+		// Set up s3client
+		s3Client = AmazonS3ClientBuilder.standard()
+				.withRegion(REGION)
+				.withCredentials(new AWSStaticCredentialsProvider(credentials))
+				.build();
 
-		s3Client = AmazonS3ClientBuilder.standard().withRegion(REGION)
-				.withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
+		// get the s3 even record
+		S3EventNotificationRecord record = s3event.getRecords().get(0);
 
-		S3Object output = s3Client.getObject(new GetObjectRequest(OUTPUT_BUCKET, OUTPUT_KEY));
+		// get S3 bucket and object key from record
+		String s3Bucket = record.getS3().getBucket().getName();
+		String s3Key = record.getS3().getObject().getKey();
+
+		// Get S3 Objects
+		S3Object output = s3Client.getObject(new GetObjectRequest(s3Bucket, s3Key));
 		S3Object plants = s3Client.getObject(MASTER_BUCKET, PLANTS_KEY);
 		S3Object mines = s3Client.getObject(MASTER_BUCKET, MINES_KEY);
 
+		// Extract S3 Objects Data into StringBuilders
 		StringBuilder outputContent = getDataFromObject(output.getObjectContent());
 		outputContent.setLength(outputContent.length()-1);
 		StringBuilder plantsContent = getDataFromObject(plants.getObjectContent());
@@ -55,44 +62,26 @@ public class Main implements RequestHandler<S3Event, String> {
 		String plantsContentString = "["+plantsContent+"]";
 		String minesContentString = "["+minesContent+"]";
 
-		// S3Object attributes = s3Client.getObject(new
-		// GetObjectRequest(attributesBucket, attributeKey));
-
-		// StringBuilder outputContent = getDataFromObject(output.getObjectContent());
-		// StringBuilder attributesContent =
-		// getDataFromObject(attributes.getObjectContent());
-
+		// Parse JSON into Object Arrays
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Output[] outputData = mapper.readValue(outputContentString, Output[].class);
 			Mine[] mineData = mapper.readValue(minesContentString, Mine[].class);
 			ProcessingPlant[] plantData = mapper.readValue(plantsContentString, ProcessingPlant[].class);
+			
+			// Enrich Data
 			EnrichedOutput[] enrichedOutput = enrichData(outputData, mineData, plantData);
+			
+			// Convert Enriched Data to JSON String
 			String json = convertToJson(enrichedOutput);
-			System.out.println(json);
-			uploadObject(json, "dummy_data_lambda");
-			for (Output out : outputData) {
-				System.out.println(out);
-			}
-			for (ProcessingPlant plant : plantData) {
-				System.out.println(plant);
-			}
-			for (Mine mine : mineData) {
-				System.out.println(mine);
-			}
-			for (EnrichedOutput eout : enrichedOutput) {
-				System.out.println(eout);
-			}
-			// System.out.println(outputData);
-			// System.out.println(mineData);
-			// System.out.println(plantData);
+			
+			// Upload Object
+			uploadObject(json, s3Key);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		// File file = new File("semi.json");
-		// mapper.writeValue(file, data);
-		// s3Client.putObject(semiBucket, "semi.json", file);
+		return null;
 	}
 
 	public static StringBuilder getDataFromObject(InputStream objectData) {
@@ -110,108 +99,7 @@ public class Main implements RequestHandler<S3Event, String> {
 
 	}
 
-	// public Object handleRequest(Object o, Context context) {
-	// S3Event input = (S3Event) o;
-	// for (S3EventNotification.S3EventNotificationRecord record :
-	// input.getRecords()) {
-	// String s3Key = record.getS3().getObject().getKey();
-	// String s3Bucket = record.getS3().getBucket().getName();
-	// // retrieve s3 object
-	// S3Object object = s3Client.getObject(new GetObjectRequest(s3Bucket, s3Key));
-	// //Read in stream data to string
-	// InputStream objectData = object.getObjectContent();
-	// BufferedReader streamReader = null;
-	// try {
-	// streamReader = new BufferedReader(new InputStreamReader(objectData,
-	// "UTF-8"));
-	// } catch (UnsupportedEncodingException e) {
-	// e.printStackTrace();
-	// }
-	// StringBuilder responseStrBuilder = new StringBuilder();
-	// String inputStr;
-	// try{
-	// while ((inputStr = streamReader.readLine()) != null)
-	// responseStrBuilder.append(inputStr);
-	// }
-	// catch (Exception e){
-	// e.printStackTrace();
-	// }
-	// //Map string to object
-	// ObjectMapper mapper = new ObjectMapper();
-	// MapType type = mapper.getTypeFactory().constructMapType(
-	// Map.class, String.class, Object.class);
-	// Map<String, Object> data = null;
-	// try {
-	// data = mapper.readValue(responseStrBuilder.toString(), type);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// System.out.println(data);
-	//
-	// }
-	// return null;
-	// }
-
-	public String handleRequest(S3Event s3event, Context context) {
-		// Set up access credentials
-		AWSCredentials credentials = new BasicAWSCredentials(Credentials.ACCESSKEY, Credentials.SECRETKEY);
-		// Set up s3client
-		s3Client = AmazonS3ClientBuilder.standard()
-				.withRegion(REGION)
-				.withCredentials(new AWSStaticCredentialsProvider(credentials))
-				.build();
-
-		// get the s3 even record
-		S3EventNotificationRecord record = s3event.getRecords().get(0);
-
-		// get S3 bucket and object key from record
-		String s3Bucket = record.getS3().getBucket().getName();
-		String s3Key = record.getS3().getObject().getKey();
-		
-
-		System.out.println("source bucket: " + s3Bucket);
-		System.out.println("source key: " + s3Key);
-
-		// Get S3 Objects
-		S3Object output = s3Client.getObject(new GetObjectRequest(s3Bucket, s3Key));
-		S3Object plants = s3Client.getObject(MASTER_BUCKET, PLANTS_KEY);
-		S3Object mines = s3Client.getObject(MASTER_BUCKET, MINES_KEY);
-
-		// Extract S3 Objects Data into StringBuilders
-		StringBuilder outputContent = getDataFromObject(output.getObjectContent());
-		StringBuilder plantsContent = getDataFromObject(plants.getObjectContent());
-		StringBuilder minesContent = getDataFromObject(mines.getObjectContent());
-
-		// Translate JSON into Object Arrays
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			Output[] outputData = mapper.readValue(outputContent.toString(), Output[].class);
-			Mine[] mineData = mapper.readValue(minesContent.toString(), Mine[].class);
-			ProcessingPlant[] plantData = mapper.readValue(plantsContent.toString(), ProcessingPlant[].class);
-			
-			//Enrich Data
-			EnrichedOutput[] enrichedOutput = enrichData(outputData, mineData, plantData);
-			
-			//Convert Enriched Data to JSON String
-			String json = convertToJson(enrichedOutput);
-			
-			uploadObject(json, s3Key);
-			for (Output out : outputData) {
-				System.out.println(out);
-			}
-			for (ProcessingPlant plant : plantData) {
-				System.out.println(plant);
-			}
-			for (Mine mine : mineData) {
-				System.out.println(mine);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private static EnrichedOutput[] enrichData(Output[] outputData, Mine[] mineData, ProcessingPlant[] plantData) {
+	private EnrichedOutput[] enrichData(Output[] outputData, Mine[] mineData, ProcessingPlant[] plantData) {
 		EnrichedOutput[] enrichedOutput = new EnrichedOutput[outputData.length];
 		for (int i = 0; i < enrichedOutput.length; i++) {
 			EnrichedOutput initiate = new EnrichedOutput();
@@ -276,7 +164,7 @@ public class Main implements RequestHandler<S3Event, String> {
 				.withRegion(REGION)
 				.withCredentials(new AWSStaticCredentialsProvider(credentials))
 				.build();
-		//put object in bucket
+		// Put object in bucket
 		s3Client.putObject(SEMI_BUCKET, s3Key, json);
 	}
 

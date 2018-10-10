@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -15,12 +13,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.event.S3EventNotification;
 import com.amazonaws.services.s3.event.S3EventNotification.S3EventNotificationRecord;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.MapType;
 import com.yash.calm.encryption.Credentials;
 import com.yash.calm.model.EnrichedOutput;
 import com.yash.calm.model.Mine;
@@ -72,7 +68,9 @@ public class Main implements RequestHandler<S3Event, String> {
 			Mine[] mineData = mapper.readValue(minesContentString, Mine[].class);
 			ProcessingPlant[] plantData = mapper.readValue(plantsContentString, ProcessingPlant[].class);
 			EnrichedOutput[] enrichedOutput = enrichData(outputData, mineData, plantData);
-
+			String json = convertToJson(enrichedOutput);
+			System.out.println(json);
+			uploadObject(json, "dummy_data_lambda");
 			for (Output out : outputData) {
 				System.out.println(out);
 			}
@@ -158,8 +156,10 @@ public class Main implements RequestHandler<S3Event, String> {
 		// Set up access credentials
 		AWSCredentials credentials = new BasicAWSCredentials(Credentials.ACCESSKEY, Credentials.SECRETKEY);
 		// Set up s3client
-		s3Client = AmazonS3ClientBuilder.standard().withRegion(REGION)
-				.withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
+		s3Client = AmazonS3ClientBuilder.standard()
+				.withRegion(REGION)
+				.withCredentials(new AWSStaticCredentialsProvider(credentials))
+				.build();
 
 		// get the s3 even record
 		S3EventNotificationRecord record = s3event.getRecords().get(0);
@@ -167,6 +167,7 @@ public class Main implements RequestHandler<S3Event, String> {
 		// get S3 bucket and object key from record
 		String s3Bucket = record.getS3().getBucket().getName();
 		String s3Key = record.getS3().getObject().getKey();
+		
 
 		System.out.println("source bucket: " + s3Bucket);
 		System.out.println("source key: " + s3Key);
@@ -187,8 +188,14 @@ public class Main implements RequestHandler<S3Event, String> {
 			Output[] outputData = mapper.readValue(outputContent.toString(), Output[].class);
 			Mine[] mineData = mapper.readValue(minesContent.toString(), Mine[].class);
 			ProcessingPlant[] plantData = mapper.readValue(plantsContent.toString(), ProcessingPlant[].class);
+			
+			//Enrich Data
 			EnrichedOutput[] enrichedOutput = enrichData(outputData, mineData, plantData);
-
+			
+			//Convert Enriched Data to JSON String
+			String json = convertToJson(enrichedOutput);
+			
+			uploadObject(json, s3Key);
 			for (Output out : outputData) {
 				System.out.println(out);
 			}
@@ -231,9 +238,46 @@ public class Main implements RequestHandler<S3Event, String> {
 					enrichedOutput[i].setIsPlantActive(plant.getIsActive());
 				}
 			}
-
 		}
 		return enrichedOutput;
+	}
+	
+	private static String convertToJson(EnrichedOutput[] enrichedOutput) {
+		String json = "[";
+		for(EnrichedOutput iterator : enrichedOutput) {
+			json = json + "{" +
+					"\"plantId\":"+ iterator.getPlantId()+ ","+
+                    "\"mineId\":"+ iterator.getMineId()+ ","+
+                    "\"expectedOutput\":"+ iterator.getExpectedOutput()+ ","+
+                    "\"actualOutput\":"+ iterator.getActualOutput()+ ","+
+                    "\"time\":"+ iterator.getTime().getTime() + ","+
+                    "\"speed\":"+ iterator.getSpeed() +"," +
+                    "\"particleSize\":"+ iterator.getParticleSize() +","+
+                    "\"frequency\":"+ iterator.getFrequency() +","+
+                    "\"force\":"+ iterator.getForce() +","+
+                    "\"isMineActive\":"+ iterator.getIsMineActive() +","+
+                    "\"mineLocation\":"+ "\"" +iterator.getMineLocation()+ "\"" +","+
+                    "\"material\":"+ "\""+ iterator.getMaterial() + "\"" +","+
+                    "\"isPlantActive\":"+ iterator.getIsPlantActive() +","+
+                    "\"plantLocation\":"+ "\"" + iterator.getPlantLocation() + "\""+
+            "},";		
+		}
+		json = json.substring(0, json.length()-1);
+		json = json + "]";
+		
+		return json;
+	}
+	
+	private static void uploadObject(String json, String s3Key) {
+		// Set up access credentials
+		AWSCredentials credentials = new BasicAWSCredentials(Credentials.ACCESSKEY, Credentials.SECRETKEY);
+		// Set up s3client
+		s3Client = AmazonS3ClientBuilder.standard()
+				.withRegion(REGION)
+				.withCredentials(new AWSStaticCredentialsProvider(credentials))
+				.build();
+		//put object in bucket
+		s3Client.putObject(SEMI_BUCKET, s3Key, json);
 	}
 
 }

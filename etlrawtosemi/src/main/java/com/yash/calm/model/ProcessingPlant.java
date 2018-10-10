@@ -21,10 +21,10 @@ public class ProcessingPlant {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int isActive() {
+	public int getIsActive() {
 		return isActive;
 	}
-	public void setActive(int isActive) {
+	public void setIsActive(int isActive) {
 		this.isActive = isActive;
 	}
 	public String getLocation() {

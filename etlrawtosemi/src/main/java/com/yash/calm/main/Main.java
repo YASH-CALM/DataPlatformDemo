@@ -104,15 +104,7 @@ public class Main implements RequestHandler<Object, Object> {
 
     }
 
-   
-//    public static Object getDataFromContent(StringBuilder content, Class clazz){
-//
-//    }
-    
-    public String handleRequest1(String input, Context context) {
-		return input;
-    	
-    }
+ 
     
 
     public Object handleRequest(Object o, Context context) {

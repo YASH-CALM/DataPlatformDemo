@@ -8,13 +8,13 @@ import com.yash.calm.streamsim.model.ProcessingPlant;
 
 public class OutputGenerator {
 
-	private static Output output = new Output();
 	private static Random rand = new Random();
 	
 	public static Output generate(ProcessingPlant plant) {
+		Output output = new Output();
 		int plantId = plant.getId();
 		output.setPlantId(plantId);
-		
+		output.setMineId(100 + rand.nextInt(2));
 		Attributes attributes = plant.getAttributes();
 		
 		int scalingFactor = 1;

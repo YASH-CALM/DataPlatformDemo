@@ -1,5 +1,6 @@
 package com.yash.calm.streamsim.util;
 
+
 import com.yash.calm.streamsim.model.Attributes;
 import com.yash.calm.streamsim.model.Output;
 import com.yash.calm.streamsim.model.ProcessingPlant;
@@ -21,6 +22,4 @@ public class StreamUtil {
 					"},";
 		return json;
 	}
-	
-	
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -25,7 +26,7 @@ import com.yash.calm.streamsim.util.StreamUtil;
 
 public class StreamingApp {
 	public static void main(String[] args) {
-		
+	
 		// Set credentials
 		AWSCredentials credentials = new BasicAWSCredentials(
 				Credentials.ACCESS_KEY, 

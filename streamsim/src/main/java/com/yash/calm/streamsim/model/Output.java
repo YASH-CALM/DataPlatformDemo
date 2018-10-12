@@ -1,4 +1,4 @@
-package com.yash.calm.streamsim.model;
+ package com.yash.calm.streamsim.model;
 
 import java.util.Date;
 
@@ -13,12 +13,11 @@ public class Output {
 	// The id of the mine associated with the output
 	private int mineId;
 	// Expected theoretical output
-	private float expectedOutput;
+	private double expectedOutput;
 	// Actual measured output
-	private float actualOutput;
+	private double actualOutput;
 	// Time that the measurement
-	private Date time;
-	
+	private Date time = new Date();
 	
 	public int getPlantId() {
 		return plantId;
@@ -32,16 +31,16 @@ public class Output {
 	public void setMineId(int mineId) {
 		this.mineId = mineId;
 	}
-	public float getExpectedOutput() {
+	public double getExpectedOutput() {
 		return expectedOutput;
 	}
-	public void setExpectedOutput(float expectedOutput) {
+	public void setExpectedOutput(double expectedOutput) {
 		this.expectedOutput = expectedOutput;
 	}
-	public float getActualOutput() {
+	public double getActualOutput() {
 		return actualOutput;
 	}
-	public void setActualOutput(float actualOutput) {
+	public void setActualOutput(double actualOutput) {
 		this.actualOutput = actualOutput;
 	}
 	public Date getTime() {

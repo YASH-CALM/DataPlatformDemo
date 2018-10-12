@@ -1,4 +1,5 @@
-package com.yash.calm.main;
+package com.yash.calm;
+
 
 import java.io.BufferedReader;
 import java.io.InputStream;

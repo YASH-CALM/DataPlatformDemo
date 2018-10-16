@@ -132,7 +132,7 @@ public class Main implements RequestHandler<S3Event, String> {
 	}
 	
 	private static String convertToJson(EnrichedOutput[] enrichedOutput) {
-		String json = "[";
+		String json = "";
 		for(EnrichedOutput iterator : enrichedOutput) {
 			json = json + "{" +
 					"\"plantId\":"+ iterator.getPlantId()+ ","+
@@ -149,11 +149,8 @@ public class Main implements RequestHandler<S3Event, String> {
                     "\"material\":"+ "\""+ iterator.getMaterial() + "\"" +","+
                     "\"isPlantActive\":"+ iterator.getIsPlantActive() +","+
                     "\"plantLocation\":"+ "\"" + iterator.getPlantLocation() + "\""+
-            "},";		
+            "}\n";		
 		}
-		json = json.substring(0, json.length()-1);
-		json = json + "]";
-		
 		return json;
 	}
 	

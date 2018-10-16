@@ -38,7 +38,6 @@ public class StreamingApp {
 		putRecordsRequest.setStreamName("DataPlatformDemo"); 
 		
 		// Generate the processing plants for simulation and add attributes
-
 		List<ProcessingPlant> plants = SimulationUtil.generateProcessingPlants();
 
 		

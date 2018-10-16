@@ -45,6 +45,11 @@ public class OutputGenerator {
 		double rangeMax = Math.sqrt(input);
 		double rangeMin = -1.0*rangeMax;
 		double randomFluctuation = rangeMin + (rangeMax - rangeMin)*rand.nextDouble();
+		double anomolousFluctuation = rand.nextInt(100);
+		if(anomolousFluctuation < 5) {
+			randomFluctuation *= 100;
+		}
+		
 		return randomFluctuation;
 	}
 	

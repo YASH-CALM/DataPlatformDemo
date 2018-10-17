@@ -19,7 +19,7 @@ public class StreamUtil {
 							"\"particleSize\":"+ attributes.getParticleSize() +","+
 							"\"frequency\":"+ attributes.getFrequency() +","+
 							"\"force\":"+ attributes.getForce() +
-					"},";
+						"},";
 		return json;
 	}
 }

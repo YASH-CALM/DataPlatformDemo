@@ -3,6 +3,7 @@ package com.yash.calm.streamsim.main;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -20,6 +21,7 @@ import com.yash.calm.streamsim.model.ProcessingPlant;
 import com.yash.calm.streamsim.util.SimulationUtil;
 
 public class StreamingApp {
+	
 	public static void main(String[] args) {
 
 		// Set credentials
@@ -39,11 +41,11 @@ public class StreamingApp {
 		
 		// Generate the processing plants for simulation and add attributes
 		List<ProcessingPlant> plants = SimulationUtil.generateProcessingPlants();
-
 		
 		// Simulate, and stream data into kinesis record request.
 		// Generate new attributes every minute
-		for(int j = 0; j < 60; j++) {
+		for(int j = 0; j < 60; j++) { 
+			System.out.println(new Date());
 			System.out.println("Recalculating Attributes...");
 			SimulationUtil.generateAttributes(plants);
 			

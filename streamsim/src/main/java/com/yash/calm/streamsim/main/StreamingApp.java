@@ -22,8 +22,6 @@ import com.yash.calm.streamsim.util.SimulationUtil;
 
 public class StreamingApp {
 	
-	static int id = 0;
-	
 	public static void main(String[] args) {
 
 		// Set credentials

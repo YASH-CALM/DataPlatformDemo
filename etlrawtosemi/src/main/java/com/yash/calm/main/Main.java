@@ -35,7 +35,7 @@ public class Main implements RequestHandler<S3Event, String> {
 		// Set up access credentials
 		AWSCredentials credentials = new BasicAWSCredentials(Credentials.ACCESSKEY, Credentials.SECRETKEY);
 		// Set up s3client
-		AmazonSs3Client = AmazonS3ClientBuilder.standard()
+		s3Client = AmazonS3ClientBuilder.standard()
 				.withRegion(REGION)
 				.withCredentials(new AWSStaticCredentialsProvider(credentials))
 				.build();

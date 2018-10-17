@@ -31,3 +31,13 @@ hs_err_pid*
 
 # AWS ACCESS KEY and SECRET ACCESS KEY 
 *Credentials.java
+
+# Ignore python imports
+*/s3-to-es/bin
+*/s3-to-es/certifi
+*/s3-to-es/chardet
+*/s3-to-es/elasticsearch*
+*/s3-to-es/idna
+*/s3-to-es/requests
+*/s3-to-es/urlib3
+*.dist-info
